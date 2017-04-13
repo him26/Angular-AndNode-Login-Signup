@@ -1,6 +1,6 @@
 var express = require('express'),
 router = express.Router(),
-login = require('../models/loginSchema');
+RegisterUser = require('../models/userSchema.js');
 router.post('/login', function(req,res){
 	try
 	{
@@ -9,11 +9,11 @@ router.post('/login', function(req,res){
   		password : req.body.password,
   	}
     console.log(loginData);
-  		login.checkLoginAuthentication(loginData,function(err,result){
+  		RegisterUser.checkLoginAuthentication(loginData,function(err,result){
         if (!err) {
             res.send({"status":true,"msg":result})
         } else {
-            res.send({"status":true,"msg":"your credentials are wrong!"})
+            res.send({"status":false,"msg":err})
         }
       });
 }

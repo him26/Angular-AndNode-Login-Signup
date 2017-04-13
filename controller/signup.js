@@ -1,29 +1,23 @@
 var express = require('express'),
 router = express.Router();
- RegisterUser = require('../models/userSchema.js');
- // signup = new signupClass();
- // console.log("RegisterUser",RegisterUser);
+RegisterUser = require('../models/userSchema.js');
+
 router.post('/signup', function(req,res){
 	console.log("Inside get signup");
 	try
 	{
 		console.log("request data is ",req.body);
-		var data = {
-			fname : req.body.fname,
-			lname : req.body.lname,
-			email : req.body.email,
-			createPass : req.body.createPass,
-			mobno : req.body.mobno,
-		};
+		var data = req.body ;
   	RegisterUser.saveRegisterUserinfo(data,function(err,result){
 			if(!err)
 			{
 				res.send({"status":true,"msg":result})
 			}
-			else {
-				res.send({"status":false,"msg":"something is wrong!"})
+			else
+      {
+				res.send({"status":false,"msg":err})
 			}
-		})
+		});
 	}
 	catch (e)
 	{
