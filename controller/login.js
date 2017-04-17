@@ -1,21 +1,48 @@
 var express = require('express'),
 router = express.Router(),
 RegisterUser = require('../models/userSchema.js');
+var conn = require("../config/config.js");
+var jwt = require('jsonwebtoken');
+
 router.post('/login', function(req,res){
 	try
 	{
-  	var loginData = {
-  		email : req.body.email,
-  		password : req.body.password,
-  	}
-    console.log(loginData);
-  		RegisterUser.checkLoginAuthentication(loginData,function(err,result){
-        if (!err) {
-            res.send({"status":true,"msg":result})
-        } else {
-            res.send({"status":false,"msg":err})
-        }
-      });
+  		RegisterUser.checkLoginAuthentication(req.body,function(err,user){
+				if (!err) {
+					if (user != null) {
+							var datapass = {
+								givenpass : req.body.password,
+								extractedpass : user.password
+							};
+							RegisterUser.comparePassword(datapass,function(err,result){
+										if (!err) {
+											if (result)
+											{
+												var token = jwt.sign( {id:user.userid}, conn.secret,{
+																	expiresIn: 86400 // expires in 24 hours
+																});
+												res.send({"status":true,"msg":"password matched","token":token});
+											}
+											else
+											{
+												res.send({"status":false,"msg":"password unmatched"});
+											}
+										}
+										else
+										{
+												res.send({"status":false,"msg":"comparison error"+err});
+										}
+								});
+				     }
+						 else
+						 {
+							 res.send({"status":false,"msg":"email id invalid"});
+				     }
+				} else {
+					// console.log("no user find");
+					res.send({"status":false,"msg":"email check error"});
+				}
+    });
 }
 catch (e)
 {

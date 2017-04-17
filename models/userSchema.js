@@ -1,24 +1,25 @@
 var mongoose = require('mongoose');
 var validators = require('mongoose-validators');
 var bcrypt = require('bcrypt');
+
 SALT_WORK_FACTOR = 5;
 var Schema = mongoose.Schema;
 var registerUserSchema = Schema({
     fname: {
         type: String,
-        require: true,
+        required: true,
 				minlength: 5,
 				maxlength: 128,
 				validate:validators.isAlpha()
     },
     lname: {
         type: String,
-        require: true,
+        required: true,
 				validate:validators.isAlpha()
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
 				minlength: 8,
 				maxlength: 128,
@@ -26,45 +27,34 @@ var registerUserSchema = Schema({
     },
     password: {
         type: String,
-        require: true,
+        required: true,
 				minlength: 8,
 				maxlength: 20
     },
     mobileNo: {
         type: Number,
-        require: true,
+        required: true,
         unique: true,
-				minlength: 10,
-				maxlength: 10
+				min: 10
     }
 }, {collection: "RegisterUser"});
-registerUserSchema.statics.saveRegisterUserinfo = function(data, cb) {
+registerUserSchema.statics.saveRegisterUserInfo = function(data, cb) {
 		var self = this;
-    this.findOne({
-        email: data.email
-    }, function(error, exist) {
+    this.findOne({email: data.email}, function(error, exist) {
         if (exist) {
-            cb(null, 'User already exist!');
+             cb(null,false);
         } else {
 						var userObj = new self(data);
-						console.log("khkkfsdkfsk",userObj);
             userObj.save(cb);
         }
     });
 };
 registerUserSchema.statics.checkLoginAuthentication = function(logindata, cb) {
-    RegisterUser.findOne({ email: logindata.email}, function(err, user) {
-        if (err) {
-            cb(err, null);
-        } else {
-            console.log("fghfh", user);
-            if (user != null) {
-                bcrypt.compare(logindata.password, user.password,cb);
-            } else {
-                cb(null, "Invalide emailid");
-            }
-        }
-    });
+    RegisterUser.findOne({ email: logindata.email}, cb);
+};
+registerUserSchema.statics.getRegisterUserProfile = function(userid, cb) {
+  var self = this;
+  this.findById(userid,cb);
 };
 registerUserSchema.pre('save', function(next) {
     var user = this;
@@ -77,6 +67,18 @@ registerUserSchema.pre('save', function(next) {
             next();
         });
     });
+});
+registerUserSchema.statics.comparePassword = function(datapassword, cb) {
+    bcrypt.compare(datapassword.givenpass,datapassword.extractedpass,cb);
+  };
+
+registerUserSchema.virtual('userid').get(function() {
+  console.log("virtuals are",this._id);
+    return this._id.toHexString();
+});
+
+registerUserSchema.set('toJSON', {
+    virtuals: true
 });
 var RegisterUser = mongoose.model('RegisterUser', registerUserSchema);
 module.exports = RegisterUser;
