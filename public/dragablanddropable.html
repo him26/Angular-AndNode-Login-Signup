@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js" type="text/javascript"></script>
+    <style media="screen">
+
+/*body {
+    padding: 20px;
+}
+.slides {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.slide {
+    padding: 15px;
+    background-color: #2F2F2F;
+    margin: 0 0 15px;
+    text-align: center;
+    color: #FFF;
+    border: 2px solid #444;
+}
+
+.slide-placeholder {
+    background: #DADADA;
+    position: relative;
+}
+.slide-placeholder:after {
+    content: " ";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 15px;
+    background-color: #FFF;
+}
+
+.slide2 {
+    height: 30px;
+}
+.slide3 {
+    height: 50px;
+}
+.slide4 {
+  width:30%;
+    height: 90px;
+}
+.slide5 {
+    height: 35px;
+}*/
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Lucida Grande","Lucida Sans Unicode", Tahoma, sans-serif;
+  font-size: 13px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #8D939D;
+  margin: 0;
+}
+
+.all-slides {
+  background: #E3E7ED;
+  counter-reset: slides;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150px;
+  padding: 3rem 1rem 1rem 2rem;
+  height: 100%;
+  overflow: auto;
+}
+
+.slides-title {
+  position: fixed;
+  background: #E3E7ED;
+  z-index: 8;
+  width: 150px;
+  text-align: center;
+  top: 0;
+  left: 0;
+  margin: 0;
+  border-bottom: 1px solid #CDD1D8;
+  color: #8585A2;
+  padding: 0.5rem 0.25rem;
+  font-size: 1rem;
+}
+
+.slide {
+  width: 100px;
+  height: 60px;
+  background: linear-gradient(#444, #111);
+  position: relative;
+  user-select: none;
+  border: 1px solid white;
+  margin: 0 0 0.75rem 0;
+  box-shadow: 0 0 5px rgba(black, 0.5);
+  text-align: center;
+  color: white;
+  line-height: 60px;
+  font-size: 0.5rem;
+  z-index: 5;
+  &:before {
+    position: absolute;
+    bottom: 0;
+    right: 100%;
+    counter-increment: slides;
+    content: counter(slides);
+    padding-right: 0.35rem;
+    color: #999;
+    line-height: normal;
+    font-size: 1rem;
+  }
+}
+
+.ui-sortable-helper {
+  transition: none !important;
+  animation: pulse 0.4s alternate infinite;
+}
+
+.sortable-placeholder {
+  height: 60px;
+  width: 5px;
+  border-left: 2px solid #4999DA;
+  margin: 0 0 0.75rem 0;
+  position: relative;
+  z-index: 6;
+}
+
+@keyframes pulse {
+  100% { transform: scale(1.1); }
+}
+
+.cloned-slides {
+  .slide {
+    position: absolute;
+    z-index: 1;
+    &:before {
+      content: attr(data-pos);
+    }
+  }
+}
+    </style>
+  </head>
+  <body>
+    <p>Look! The items are different heights but the transitions still work</p>
+  <!-- <div class="slides">
+    <div class="slide slide1">Slide 1</div>
+    <div class="slide slide2">Slide 2</div>
+    <div class="slide slide3">Slide 3</div>
+    <div class="slide slide4">Slide 4</div>
+    <div class="slide slide5">Slide 5</div>
+  </div> -->
+
+  <div class='all-slides'>
+  <h2 class='slides-title'>Slides</h2>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+  <div class='slide'>Slide</div>
+</div>
+<div class='cloned-slides' id='cloned-slides'></div>
+  <script type="text/javascript">
+//
+// $(".slides").sortable({
+//    placeholder: 'slide-placeholder',
+//   axis: "z",
+//
+//   revert: 150,
+//   start: function(e, ui){
+//
+//       placeholderHeight = ui.item.outerHeight();
+//       ui.placeholder.height(placeholderHeight + 15);
+//       $('<div class="slide-placeholder-animator" data-height="' + placeholderHeight + '"></div>').insertAfter(ui.placeholder);
+//
+//   },
+//   change: function(event, ui) {
+//
+//       ui.placeholder.stop().height(0).animate({
+//           height: ui.item.outerHeight() + 15
+//       }, 300);
+//
+//       placeholderAnimatorHeight = parseInt($(".slide-placeholder-animator").attr("data-height"));
+//
+//       $(".slide-placeholder-animator").stop().height(placeholderAnimatorHeight + 15).animate({
+//           height: 0
+//       }, 300, function() {
+//           $(this).remove();
+//           placeholderHeight = ui.item.outerHeight();
+//           $('<div class="slide-placeholder-animator" data-height="' + placeholderHeight + '"></div>').insertAfter(ui.placeholder);
+//       });
+//
+//   },
+//   stop: function(e, ui) {
+//
+//       $(".slide-placeholder-animator").remove();
+//
+//   },
+// });
+
+
+$(".slide").each(function(i) {
+  var item = $(this);
+  var item_clone = item.clone();
+  item.data("clone", item_clone);
+  var position = item.position();
+  item_clone
+  .css({
+    left: position.left,
+    top: position.top,
+    visibility: "hidden"
+  })
+    .attr("data-pos", i+1);
+
+  $("#cloned-slides").append(item_clone);
+});
+
+$(".all-slides").sortable({
+
+  axis: "z",
+  revert: true,
+  scroll: false,
+  placeholder: "sortable-placeholder",
+  cursor: "move",
+
+  start: function(e, ui) {
+    ui.helper.addClass("exclude-me");
+    $(".all-slides .slide:not(.exclude-me)")
+      .css("visibility", "hidden");
+    ui.helper.data("clone").hide();
+    $(".cloned-slides .slide").css("visibility", "visible");
+  },
+
+  stop: function(e, ui) {
+    $(".all-slides .slide.exclude-me").each(function() {
+      var item = $(this);
+      var clone = item.data("clone");
+      var position = item.position();
+
+      clone.css("left", position.left);
+      clone.css("top", position.top);
+      clone.show();
+
+      item.removeClass("exclude-me");
+    });
+
+    $(".all-slides .slide").each(function() {
+      var item = $(this);
+      var clone = item.data("clone");
+
+      clone.attr("data-pos", item.index());
+    });
+
+    $(".all-slides .slide").css("visibility", "visible");
+    $(".cloned-slides .slide").css("visibility", "hidden");
+  },
+
+  change: function(e, ui) {
+    $(".all-slides .slide:not(.exclude-me)").each(function() {
+      var item = $(this);
+      var clone = item.data("clone");
+      clone.stop(true, false);
+      var position = item.position();
+      clone.animate({
+        left: position.left,
+        top: position.top
+      }, 200);
+    });
+  }
+
+});
+
+  </script>
+  </body>
+</html>

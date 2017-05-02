@@ -4,7 +4,10 @@ var jwt = require("jsonwebtoken");
 var conn = require("../config/config.js");
 router.use(function(req, res, next) {
     console.log("athentication middleware");
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    var token = req.headers.cookie;
+        token = token.substr(4);
+    console.log(token);
     if (token) {
         jwt.verify(token, conn.secret, function(err, decoded) {
             if (err) {

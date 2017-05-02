@@ -5,14 +5,14 @@ var bcrypt = require('bcrypt');
 SALT_WORK_FACTOR = 5;
 var Schema = mongoose.Schema;
 var registerUserSchema = Schema({
-    fname: {
+    firstname: {
         type: String,
         required: true,
 				minlength: 5,
 				maxlength: 128,
 				validate:validators.isAlpha()
     },
-    lname: {
+    lastname: {
         type: String,
         required: true,
 				validate:validators.isAlpha()
@@ -31,7 +31,7 @@ var registerUserSchema = Schema({
 				minlength: 8,
 				maxlength: 20
     },
-    mobileNo: {
+    mobileno: {
         type: Number,
         required: true,
         unique: true,
